@@ -10,6 +10,21 @@ export const page = defineField({
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
+
+    defineField({
+      name: "site",
+      type: "reference",
+      to: [{ type: "site" }],
+      readOnly: true,
+      validation: (Rule) => Rule.required(),
+    }),
+
+    defineField({
+      name: "parent",
+      type: "reference",
+      to: [{ type: "page" }],
+    }),
+
     defineField({
       name: "slug",
       type: "slug",
