@@ -22,6 +22,8 @@ export default async function middleware(req: NextRequest) {
   // const isAllowed = allowedDomains?.some((domain) => hostname === domain.domain && firstPath !== domain.domain);
   // if (!isAllowed) return new Response(null, { status: 404 });
 
+  console.log(hostname);
+
   // Rewrite the URL in the dynamic route based in the subdomain
   return NextResponse.rewrite(new URL(`/${hostname}${url.pathname}`, req.url));
 }
