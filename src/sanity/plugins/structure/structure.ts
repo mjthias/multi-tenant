@@ -15,6 +15,8 @@ export const structure: StructureResolver = async (S, context) => {
     .items([
       // Create listItem per published site
       ...sites?.map((site) => {
+        const siteId = site._id;
+
         return S.listItem()
           .title(site.title || "Unnamed Site")
           .icon(EarthGlobeIcon)
@@ -27,12 +29,16 @@ export const structure: StructureResolver = async (S, context) => {
                   .title("Frontpage")
                   .icon(HomeIcon)
                   .child(
-                    S.documentWithInitialValueTemplate("frontpage-template", { siteId: site._id })
+                    S.documentWithInitialValueTemplate("frontpage-template", { siteId })
                       .schemaType("frontpage")
-                      .id(`frontpage-${site._id}`)
+                      .id(`frontpage-${siteId}`)
                   ),
-                pageReferenceTree(S, context.documentStore, site._id),
-                S.listItem().title("Pages (unstructured)").child(S.documentTypeList("page")),
+                pageReferenceTree(S, context.documentStore, siteId),
+                S.listItem()
+                  .title("Pages (unstructured)")
+                  .child(
+                    S.documentTypeList("page").filter("_type == 'page' && site->_id == $siteId").params({ siteId })
+                  ),
                 S.divider(),
 
                 // Site Settings
@@ -40,9 +46,9 @@ export const structure: StructureResolver = async (S, context) => {
                   .title("Settings")
                   .icon(CogIcon)
                   .child(
-                    S.documentWithInitialValueTemplate("settings-template", { siteId: site._id })
+                    S.documentWithInitialValueTemplate("settings-template", { siteId })
                       .schemaType("settings")
-                      .id(`settings-${site._id}`)
+                      .id(`settings-${siteId}`)
                   ),
               ])
           );

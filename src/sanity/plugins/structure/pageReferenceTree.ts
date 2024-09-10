@@ -24,15 +24,15 @@ type TPageReferenceTree = Array<{
 
 export default function pageReferenceTree(S: StructureBuilder, documentStore: DocumentStore, siteId: string) {
   const query = groq`
-  *[_type == "page" && !(_id in path("drafts.**")) && !defined(parent)] | order(lower(title) asc) [] {
+  *[_type == "page" && site->_id == site->_id == $siteId  && !defined(parent)] | order(lower(title) asc) [] {
     _id,
     _type,
     title,
-    'children': *[_type == "page" && parent._ref == ^._id] | order(lower(title) asc) [] {
+    'children': *[_type == "page" && site->_id == $siteId && parent._ref == ^._id] | order(lower(title) asc) [] {
       _id,
       _type,
       title,
-      'children': *[_type == "page" && parent._ref == ^._id] | order(lower(title) asc) [] {
+      'children': *[_type == "page" && site->_id == $siteId && parent._ref == ^._id] | order(lower(title) asc) [] {
         _id,
         _type,
         title,
@@ -44,7 +44,7 @@ export default function pageReferenceTree(S: StructureBuilder, documentStore: Do
     .title("Pages (tree)")
     .icon(SchemaIcon)
     .child(() =>
-      documentStore.listenQuery(query, {}, { apiVersion, perspective: "previewDrafts" }).pipe(
+      documentStore.listenQuery(query, { siteId }, { apiVersion, perspective: "previewDrafts" }).pipe(
         map((parents: TPageReferenceTree) =>
           S.list()
             .title("Pages")
