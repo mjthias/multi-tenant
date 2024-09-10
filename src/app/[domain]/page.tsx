@@ -1,6 +1,5 @@
 import { loadSites } from "@/lib/loaders/load.sites";
 import { loadFrontPage } from "@/lib/loaders/load.frontpage";
-import { notFound } from "next/navigation";
 
 type HomeProps = {
   params: {
@@ -15,12 +14,10 @@ export async function generateStaticParams() {
 
 export default async function Home({ params }: HomeProps) {
   const data = await loadFrontPage(params);
-  if (!data) return notFound();
-  const { title } = data;
 
   return (
     <main>
-      <h1>{title}</h1>
+      <h1>{data?.title || "no title"}</h1>
     </main>
   );
 }

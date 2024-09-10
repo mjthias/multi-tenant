@@ -1,7 +1,7 @@
 import { groq } from "next-sanity";
 
 export const frontpageQuery = groq`
-*[_type == "frontpage" && domain->domain == $domain ][0] {
+*[_type == "frontpage" && site->domain == $domain ][0] {
   title
 }
 `;
